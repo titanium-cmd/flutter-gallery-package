@@ -2,10 +2,10 @@ library galleryimage;
 
 import 'package:flutter/material.dart';
 
-import 'gallery_item_model.dart';
-import 'gallery_item_thumbnail.dart';
 import './gallery_image_view_wrapper.dart';
 import './util.dart';
+import 'gallery_item_model.dart';
+import 'gallery_item_thumbnail.dart';
 
 class GalleryImage extends StatefulWidget {
   final List<String> imageUrls;
@@ -29,6 +29,7 @@ class GalleryImage extends StatefulWidget {
   final bool showAppBar;
   final bool closeWhenSwipeUp;
   final bool closeWhenSwipeDown;
+  final VoidCallback? onImageRemove;
 
   const GalleryImage({
     Key? key,
@@ -53,6 +54,7 @@ class GalleryImage extends StatefulWidget {
     this.showAppBar = true,
     this.closeWhenSwipeUp = false,
     this.closeWhenSwipeDown = false,
+    this.onImageRemove,
   })  : assert(numOfShowImages <= imageUrls.length),
         super(key: key);
   @override
@@ -73,9 +75,7 @@ class _GalleryImageState extends State<GalleryImage> {
         ? const EmptyWidget()
         : GridView.builder(
             primary: false,
-            itemCount: galleryItems.length > 3
-                ? widget.numOfShowImages
-                : galleryItems.length,
+            itemCount: galleryItems.length > 3 ? widget.numOfShowImages : galleryItems.length,
             padding: widget.padding,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               childAspectRatio: widget.childAspectRatio,
@@ -109,6 +109,13 @@ class _GalleryImageState extends State<GalleryImage> {
         alignment: AlignmentDirectional.center,
         fit: StackFit.expand,
         children: <Widget>[
+          if(widget.onImageRemove != null) Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: widget.onImageRemove,
+              icon: const Icon(Icons.close, color: Colors.red),
+            ),
+          ),
           GalleryItemThumbnail(
             galleryItem: galleryItems[index],
             loadingWidget: widget.loadingWidget,
@@ -136,8 +143,7 @@ class _GalleryImageState extends State<GalleryImage> {
 
 // Check if item is last image in grid to view image or number
   bool _isLastItem(int index) {
-    return index < galleryItems.length - 1 &&
-        index == widget.numOfShowImages - 1;
+    return index < galleryItems.length - 1 && index == widget.numOfShowImages - 1;
   }
 
 // to open gallery image in full screen
