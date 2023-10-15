@@ -87,14 +87,31 @@ class _GalleryImageState extends State<GalleryImage> {
             itemBuilder: (BuildContext context, int index) {
               return _isLastItem(index)
                   ? _buildImageNumbers(index)
-                  : GalleryItemThumbnail(
-                      galleryItem: galleryItems[index],
-                      onTap: () {
-                        _openImageFullScreen(index);
-                      },
-                      loadingWidget: widget.loadingWidget,
-                      errorWidget: widget.errorWidget,
-                      radius: widget.imageRadius,
+                  : Stack(
+                      alignment: AlignmentDirectional.center,
+                      fit: StackFit.expand,
+                      children: [
+                        GalleryItemThumbnail(
+                          galleryItem: galleryItems[index],
+                          onTap: () {
+                            _openImageFullScreen(index);
+                          },
+                          loadingWidget: widget.loadingWidget,
+                          errorWidget: widget.errorWidget,
+                          radius: widget.imageRadius,
+                        ),
+                        if (widget.onImageRemove != null)
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              onPressed: widget.onImageRemove,
+                              icon: const Card(
+                                  color: Colors.black26,
+                                  elevation: 0,
+                                  child: Icon(Icons.close, color: Colors.red)),
+                            ),
+                          ),
+                      ],
                     );
             });
   }
@@ -109,13 +126,6 @@ class _GalleryImageState extends State<GalleryImage> {
         alignment: AlignmentDirectional.center,
         fit: StackFit.expand,
         children: <Widget>[
-          if(widget.onImageRemove != null) Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
-              onPressed: widget.onImageRemove,
-              icon: const Icon(Icons.close, color: Colors.red),
-            ),
-          ),
           GalleryItemThumbnail(
             galleryItem: galleryItems[index],
             loadingWidget: widget.loadingWidget,
