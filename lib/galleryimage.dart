@@ -29,7 +29,7 @@ class GalleryImage extends StatefulWidget {
   final bool showAppBar;
   final bool closeWhenSwipeUp;
   final bool closeWhenSwipeDown;
-  final VoidCallback? onImageRemove;
+  final ValueSetter<int>? onImageRemove;
 
   const GalleryImage({
     Key? key,
@@ -101,10 +101,11 @@ class _GalleryImageState extends State<GalleryImage> {
                           radius: widget.imageRadius,
                         ),
                         if (widget.onImageRemove != null)
-                          Align(
-                            alignment: Alignment.topRight,
+                          Positioned(
+                            top: -10,
+                            right: -10,
                             child: IconButton(
-                              onPressed: widget.onImageRemove,
+                              onPressed: () => widget.onImageRemove!(index),
                               icon: const Card(
                                   color: Colors.black26,
                                   elevation: 0,
